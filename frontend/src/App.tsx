@@ -10,7 +10,7 @@ interface Todo {
   deadline: Date;
 }
 
-const URL = "http://localhost:3000/";
+const URL = "http://localhost:3000";
 
 
 function App() {
@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     const fetchTodos = async () => {
 
-      const response = await fetch(`${URL}/todos`);
+      const response = await fetch(`${URL}/`);
       const todos = (await response.json()) as Todo[];
 
       setTodos(todos); 

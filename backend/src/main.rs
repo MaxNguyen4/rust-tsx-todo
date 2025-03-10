@@ -6,6 +6,8 @@ use std::sync::Arc;
 
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 
+use tower_http::cors::{CorsLayer, Any};
+
 use chrono::NaiveDate;
 
 pub struct AppState {
@@ -15,7 +17,7 @@ pub struct AppState {
 #[tokio::main]
 async fn main() {
     // Establish database connection
-    let database_url = "postgres://maxnguyen@localhost:5432/maxnguyen";
+    let database_url = "postgres://postgres:password@localhost:5432/maxnguyen";
     let pool = match PgPoolOptions::new()
         .max_connections(5)
         .connect(database_url)
@@ -31,12 +33,19 @@ async fn main() {
         }
     };
 
+    // Create cors layer
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods(Any)
+        .allow_headers(Any);
+
     // Build application with single route
     let app_state = Arc::new(AppState {
         pg_pool: pool.clone(),
     });
     let app = Router::new()
         .route("/", get(get_todos))
+        .layer(cors)
         .with_state(app_state);
 
     // run our app with hyper, listening globally on port 3000
