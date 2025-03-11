@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     const fetchTodos = async () => {
 
-      const response = await fetch(`${URL}/`);
+      const response = await fetch(`${URL}/todos`);
       const todos = (await response.json()) as Todo[];
 
       setTodos(todos); 
@@ -33,13 +33,18 @@ function App() {
 
 
   return (
-    <>
-      <ul>
-        {todos.map((todos) => {
-          return <li key={todos.id}> {todos.todo} </li>
-        })}
+    <> 
+      <section>
 
-      </ul>
+
+        <ul>
+          {todos.map((todos) => {
+            return <li key={todos.id}> {todos.todo} </li>
+          })}
+
+        </ul>
+
+      </section>
 
     </>
   )

@@ -114,4 +114,20 @@ async fn post_todo(
     }
 }
 
-async fn delete_todo() {}
+async fn delete_todo(
+    State(state): State<Arc<AppState>>,
+    Json(id): Json<i32>,
+) -> Result<Json<Todo>, (StatusCode, String)> {
+    match sqlx::query_as!(
+        Todo,
+        "DELETE FROM todos WHERE id = $1
+        RETURNING id, user_id, todo, category, deadline",
+        id
+    )
+    .fetch_one(&state.pg_pool)
+    .await
+    {
+        Ok(todo) => Ok(Json(todo)),
+        Err(e) => Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
+    }
+}
